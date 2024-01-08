@@ -5,6 +5,8 @@ torchaudio==0.12.1
 torchvision==0.13.1
 tornado==6.0.4
 tqdm
+scikit-learn 
+pandas
 transformers==4.25.1
 typing-extensions==4.4.0
 unicodecsv==0.14.1

@@ -18,7 +18,7 @@ from transformers import AutoTokenizer
 from transformers import AutoModel
 from transformers import AutoConfig
 from transformers import BertModel, BertTokenizer
-
+from loss import focal_loss
 from transformers import AdamW
 from transformers import get_linear_schedule_with_warmup
 from sklearn import model_selection

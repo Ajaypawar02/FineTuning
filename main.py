@@ -8,20 +8,23 @@ import torch.nn as nn
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
+from model import SEN_Model
 from sklearn import metrics
 from sklearn.metrics import f1_score
 from transformers import AutoTokenizer
 from transformers import AutoModel
 from transformers import AutoConfig
 from transformers import BertModel, BertTokenizer
-
+from args import args
 from transformers import AdamW
 from transformers import get_linear_schedule_with_warmup
 from sklearn import model_selection
 from tqdm import tqdm
-
+from dataset import Data_class
 from sklearn.model_selection import KFold
 import warnings
+from loss import focal_loss
+from train_eval import train_fn, eval_fn
 warnings.filterwarnings("ignore")
 import gc
 gc.enable()
@@ -61,7 +64,7 @@ def calculate_metrics(final_outputs, final_targets):
 
 
 def run(fold):
-    df = pd.read_csv("/home/ajay/SchoolHack/FineTuning/data/train_folds.csv")[:5000]
+    df = pd.read_csv("./data/train_folds.csv")
 #     df = df.iloc[:5000]
 #     df_train, df_valid = model_selection.train_test_split(df, test_size = 0.1, random_state = 42)
     
@@ -98,14 +101,15 @@ def run(fold):
     scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps = 0, num_training_steps = num_training_steps)
     
     model = model.to(device)
-    loss_list = []
+    # loss_list = []
     
     best_val = -1
     
     for epoch in range(10):
+        loss_list = []
         loss = train_fn(train_loader, model, optimizer, device, scheduler)
         print(loss)
-        loss_list.append(loss)
+        # loss_list.append(loss)
         final_out, final_tar = eval_fn(valid_loader, model, device)
         print("================loss============", loss)
 #         metrics = calculate_metrics(final_out, final_tar)
@@ -125,22 +129,28 @@ def run(fold):
 
 #         outputs = np.array(final_out) >= 0.5
         accuracy = metrics["f1_score"]
+        loss_list.append((metrics, loss))
+        file_path = f"./data/all_details_{epoch}.txt"
+        dict_str = str(loss_list)
+        with open(file_path, 'w') as f:
+            f.write(dict_str)
         
-        if best_val < accuracy:
+        if best_val <= accuracy:
             print("======saving model============")
             best_val = accuracy
-            model_path = "/kaggle/working/" + r"model_{fold}_.pth".format(fold = fold)
+            model_path = "./data/" + r"modelsassa_{fold}_.pth".format(fold = fold)
             torch.save(model.state_dict(), model_path)
-#     loss_path = r"\Users\ajayp\OneDrive\Desktop\Project\Saved_model_weights\model_{fold}_.pickle".format(fold = fold)
-#     with open(loss_path, 'wb') as f:
-#         pickle.dump(loss_list, f)
+    file_path = "./data/all_details.txt"
+    dict_str = str(loss_list)
+    with open(file_path, 'w') as f:
+        f.write(dict_str)
         
         
         
 if __name__ == "__main__":
-    run(fold = 0)
-    run(fold = 1)
-    run(fold = 2)
+    # run(fold = 0)
+    # run(fold = 1)
+    # run(fold = 2)
     run(fold = 3)
-    run(fold = 4)
+    # run(fold = 4)
                 

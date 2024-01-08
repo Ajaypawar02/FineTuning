@@ -83,7 +83,7 @@ class Data_class(Dataset):
 
 
 if __name__ == "__main__":
-    file_path = "/home/ajay/SchoolHack/FineTuning/data/train_folds.csv"
+    file_path = "./data/train_folds.csv"
     try:
         corrected_df = pd.read_csv(file_path)
         print(corrected_df["context"].value_counts())

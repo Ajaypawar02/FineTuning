@@ -38,7 +38,7 @@ class args:
     BERT_PATH = "bert-base-uncased"
     tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_PATH)
     MAX_LEN = 256
-    train_batch_size = 1
+    train_batch_size = 16
     valid_batch_size = 1
     epochs = 2
     model_path = r"C:\Users\ajayp\OneDrive\Desktop\Project\Saved_model_weights"

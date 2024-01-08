@@ -18,7 +18,7 @@ from transformers import AutoTokenizer
 from transformers import AutoModel
 from transformers import AutoConfig
 from transformers import BertModel, BertTokenizer
-
+from loss import focal_loss
 from transformers import AdamW
 from transformers import get_linear_schedule_with_warmup
 from sklearn import model_selection
@@ -90,9 +90,9 @@ class SEN_Model(nn.Module):
         # Apply the final linear layer
         return self.linear(context_vector)
     
-# if __name__ == "__main__":
-model = SEN_Model()
-ids = torch.rand(256)
-mask = torch.rand(1)
-temp = model(ids.unsqueeze(0), mask.unsqueeze(0))
-print(temp.shape)
+if __name__ == "__main__":
+    model = SEN_Model()
+    ids = torch.rand(256)
+    mask = torch.rand(1)
+    temp = model(ids.unsqueeze(0), mask.unsqueeze(0))
+    print(temp.shape)
